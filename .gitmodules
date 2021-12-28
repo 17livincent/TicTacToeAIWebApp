@@ -1,0 +1,3 @@
+[submodule "TicTacToeGameAI"]
+	path = TicTacToeGameAI
+	url = https://github.com/17livincent/TicTacToeGameAI.git
