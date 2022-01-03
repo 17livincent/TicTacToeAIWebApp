@@ -243,11 +243,11 @@ class App extends React.Component {
      */
     renderResult() {
         return (
-            <React.Fragment>
+            <div id='result'>
                 {this.state.result === 1 && <h2>Player O won!</h2>}
                 {this.state.result === 0 && <h2>Draw!</h2>}
                 {this.state.result === -1 && <h2>Player X won!</h2>}
-            </React.Fragment>
+            </div>
         );
     }
 
@@ -304,18 +304,28 @@ class App extends React.Component {
             <React.Fragment>
                 <header className="App-header">
                     <h1>Tic Tac Toe AIs</h1>
+                    <hr />
                 </header>
-                <p>Play a game of Tic Tac Toe against different types of AI players.</p>
-                Choose Player X type: {opponentSelect}<br />
-                {(this.state.chosenPlayerType === MINIMAX_PLAYER_TYPE || this.state.chosenPlayerType === MONTECARLO_PLAYER_TYPE) && playerOptionSelect}
-                <br />
-                {submitButton}
-                <br />
-                {(this.state.playing) && game}
+                <div id='body'>
+                    <p>Play a game of Tic Tac Toe against different types of AI players.
+                        The selectable algorithms are of Minimax and Monte Carlo ST algorithms.</p>
+                    <div id='inputForm'>
+                        Choose Player X type: {opponentSelect}<br />
+                        {(this.state.chosenPlayerType === MINIMAX_PLAYER_TYPE || this.state.chosenPlayerType === MONTECARLO_PLAYER_TYPE) && playerOptionSelect}
+                        <br />
+                        {submitButton}
+                    <br />
+                </div>
+                <div id='gameBoard'>
+                    {(this.state.playing) && game}
+                </div>
+                </div> 
                 <footer>
                     <br />
                     <hr />
-                    This website is a personal coding project.  Check out the GitHub repository <a href='https://github.com/17livincent/TicTacToeAIWebApp' target='_blank' rel='noopener noreferrer'>here</a>.
+                    This website is a personal coding project focusing on AI and adversarial searches.  Check out the GitHub repository <a href='https://github.com/17livincent/TicTacToeAIWebApp' target='_blank' rel='noopener noreferrer'>here</a>.
+                    <br />
+                    <br />
                 </footer>
             </React.Fragment>
         );
