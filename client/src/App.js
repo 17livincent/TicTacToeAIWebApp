@@ -31,7 +31,7 @@ let move = {
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.serverName = 'localhost:3002';
+        this.serverName = 'tictactoeai.duck-buns.com';
         this.socket = socketIOClient(this.serverName);  // Socket comms for exchanging game info
 
         this.state = {
