@@ -44,7 +44,7 @@ class App extends React.Component {
             board: Array.from([[EMPTY, EMPTY, EMPTY], [EMPTY, EMPTY, EMPTY], [EMPTY, EMPTY, EMPTY]]),
             // Array of played moves
             moveHistory: [],
-            result: undefined   // -1 for loss, 1 for win, 0 for draw
+            result: null   // -1 for loss, 1 for win, 0 for draw
         }
 
         this.submit = this.submit.bind(this);
@@ -52,6 +52,7 @@ class App extends React.Component {
         this.renderBoard = this.renderBoard.bind(this);
         this.renderMoveHistory = this.renderMoveHistory.bind(this);
         this.renderResult = this.renderResult.bind(this);
+        this.playAgain = this.playAgain.bind(this);
     }
 
     componentDidMount() {
@@ -170,12 +171,28 @@ class App extends React.Component {
     }
 
     /**
+     * When the client has finished the game and 
+     * chooses the play another game with the same options.
+     */
+    playAgain() {
+        // Reset everything except the chosen option
+        this.setState({currentTurn: 0, 
+            waitingForOpp: true, 
+            board: Array.from([[EMPTY, EMPTY, EMPTY], [EMPTY, EMPTY, EMPTY], [EMPTY, EMPTY, EMPTY]]),
+            moveHistory: [],
+            result: null
+        });
+        // Play again
+        this.play();
+    }
+
+    /**
      * Handles when the user clicks a box in the game grid.
      */
     clickBox(row, col) {
         // If the clicked box is empty, the move is valid
         // Otherwise, do nothing
-        if((this.state.result == undefined) && this.state.playing && (this.state.board[row][col] === EMPTY) && (this.state.waitingForOpp === false)) {
+        if((this.state.result === null) && this.state.playing && (this.state.board[row][col] === EMPTY) && (this.state.waitingForOpp === false)) {
             console.log(row, col);
             // Send move to server
             let oMove = { ...move };
@@ -289,6 +306,12 @@ class App extends React.Component {
             </button>
         </React.Fragment>
 
+        let playAgainButton = <React.Fragment>
+            <button id='again' onClick={this.playAgain} disabled={this.state.result === null}>
+                Play Again
+            </button>
+        </React.Fragment>
+
         let game = <React.Fragment>
             <br />
             Click on an empty box to place a mark.            
@@ -308,25 +331,24 @@ class App extends React.Component {
                 </header>
                 <div id='body'>
                     <p>Play a game of Tic Tac Toe against different types of AI players.
-                        The selectable algorithms are of Minimax and Monte Carlo ST algorithms.</p>
+                        The selectable algorithms are of Minimax and Monte Carlo ST algorithms.
+                        <br />
+                    </p>
+                    <p>
+                        This website is a personal coding project focusing on AI and adversarial searches.  
+                        Check out the GitHub repository <a href='https://github.com/17livincent/TicTacToeAIWebApp' target='_blank' rel='noopener noreferrer'>here</a>.</p>
                     <div id='inputForm'>
                         Choose Player X type: {opponentSelect}<br />
                         {(this.state.chosenPlayerType === MINIMAX_PLAYER_TYPE || this.state.chosenPlayerType === MONTECARLO_PLAYER_TYPE) && playerOptionSelect}
                         <br />
                         {submitButton}
                     <br />
-                </div>
-                <div id='gameBoard'>
-                    {(this.state.playing) && game}
-                </div>
+                    </div>
+                    <div id='gameBoard'>
+                        {(this.state.playing) && game}
+                        {(this.state.result !== null) && playAgainButton}
+                    </div>
                 </div> 
-                <footer>
-                    <br />
-                    <hr />
-                    This website is a personal coding project focusing on AI and adversarial searches.  Check out the GitHub repository <a href='https://github.com/17livincent/TicTacToeAIWebApp' target='_blank' rel='noopener noreferrer'>here</a>.
-                    <br />
-                    <br />
-                </footer>
             </React.Fragment>
         );
     }
