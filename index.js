@@ -25,7 +25,7 @@ server.listen(port, () => {
 });
 
 socket.on('connection', (socket) => {
-    console.log(`${socket.id}: Connected to client`);
+    console.log(`${(new Date()).toString()} -- ${socket.id}: Connected to client`);
     socket.emit('connection');  // ack
 
     // Variable holding the executable game file process
@@ -41,10 +41,9 @@ socket.on('connection', (socket) => {
         game.stdin.setEncoding('utf-8');
         game.stdout.on('data', (data) => {  // Output from executable
             output = data.toString().trim();
-            console.log(output);
             // If the move of player X is outputed ("<turn #> X:<r>,<c>")
             if(output[2] === 'X') {
-                console.log(`${socket.id}: X made a move`);
+                console.log(`${(new Date()).toString()} -- ${socket.id}: X made a move`);
                 let xRow = output[4];
                 let xCol = output[6];
                 let xMove = { ...move };
@@ -55,35 +54,34 @@ socket.on('connection', (socket) => {
             }
             // If the move of player O is asked for ("\tO:")
             if(output.includes('O:')) {
-                console.log(`${socket.id}: Requesting move`);
+                console.log(`${(new Date()).toString()} -- ${socket.id}: Requesting move`);
                 socket.emit('request move');
             }
             // If the result of the game is given (1 if X won, 0 if draw, or -1 of O won)
             if(output.includes('Result:')) {
                 let rI = output.indexOf('Result:');
-                console.log(output[rI + 7]);
                 if(output[rI + 7] === '1') {
-                    console.log(`${socket.id}: X won`);
+                    console.log(`${(new Date()).toString()} -- ${socket.id}: X won`);
                     socket.emit('x won');
                 }
                 else if(output[rI + 7] === '0') {
-                    console.log(`${socket.id}: Draw`);
+                    console.log(`${(new Date()).toString()} -- ${socket.id}: Draw`);
                     socket.emit('draw');
                 }
                 else if(output[rI + 7] === '-') {
-                    console.log(`${socket.id}: O won`);
+                    console.log(`${(new Date()).toString()} -- ${socket.id}: O won`);
                     socket.emit('o won');
                 }
             }
             
         });
         game.stderr.on('data', (data) => {  // Errors
-            console.log(`${socket.id}: Error:\n${data.toString()}`);
+            console.log(`${(new Date()).toString()} -- ${socket.id}: Error:\n${data.toString()}`);
             // Send error message
             socket.emit('error');
         });
         game.on('close', (code) => {    // On termination
-            console.log(`${socket.id}: Game concluded`);
+            console.log(`${(new Date()).toString()} -- ${socket.id}: Game concluded`);
             socket.emit('over');
         });
     });
@@ -91,13 +89,13 @@ socket.on('connection', (socket) => {
     // Client plays a move
     socket.on('move', (move, callback) => {
         callback('Acknowledge move');
-        console.log(`${socket.id}: O made a move`);
+        console.log(`${(new Date()).toString()} -- ${socket.id}: O made a move`);
         // Data in move: row and col
         game.stdin.write(`${move.row.toString()},${move.col.toString()}\n`);
     });
 
     socket.on('disconnect', () => {
-        console.log(`${socket.id}: Client disconnected`);
+        console.log(`${(new Date()).toString()} -- ${socket.id}: Client disconnected`);
         socket.disconnect();
         // Terminate child process if running
         (game !== undefined) && setTimeout(() => game.kill('SIGINT'), 100);
